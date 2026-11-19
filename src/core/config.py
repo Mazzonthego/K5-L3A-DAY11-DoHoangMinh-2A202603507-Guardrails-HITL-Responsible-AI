@@ -170,7 +170,17 @@ def get_openai_api_key() -> str:
 
 
 def red_openai_client_kwargs() -> dict:
-    return {"api_key": get_openai_api_key() or None}
+    """OpenAI SDK kwargs for Red.
+
+    ``OPENAI_BASE_URL`` is optional and lets the same OpenAI SDK/model run
+    through a compatible gateway (used here because the direct OpenAI key has
+    no credits). The model name stays ``gpt-4o-mini``.
+    """
+    kwargs = {"api_key": get_openai_api_key() or None}
+    base_url = os.environ.get("OPENAI_BASE_URL", "").strip()
+    if base_url:
+        kwargs["base_url"] = base_url
+    return kwargs
 
 
 def red_provider_label(tier: str = "advance") -> str:
